@@ -149,6 +149,8 @@ export default class FileUploader extends React.Component {
           </div>
         }
         {this.renderUploadingItems()}
+
+        {this.props.children}
       </Dropper>
     );
   }
