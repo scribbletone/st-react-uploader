@@ -154,9 +154,10 @@ export default class FileUploader extends React.Component {
             {this.renderSelectedItems()}
           </div>
         }
-        {this.renderUploadingItems()}
-
-        {this.props.children}
+        <div className={this.props.itemsWrapperClass}>
+          {this.renderUploadingItems()}
+          {this.props.children}
+        </div>
       </Dropper>
     );
   }
@@ -177,6 +178,7 @@ FileUploader.propTypes = {
   fileBtnStyle: PropTypes.object,
   fileBtnText: PropTypes.string,
   fileKey: PropTypes.string,
+  itemsWrapperClass: PropTypes.string,
   multiple: PropTypes.bool,
   onError: PropTypes.func,
   onSuccess: PropTypes.func,
@@ -197,6 +199,7 @@ FileUploader.defaultProps = {
   fileBtnStyle: {},
   fileBtnText: 'Select File',
   fileKey: '',
+  itemsWrapperClass: '',
   multiple: false,
   wrapperClass: '',
   wrapperStyle: {},
