@@ -123,6 +123,7 @@ export default class FileUploader extends React.Component {
       <Dropper 
         active={this.props.dragAndDrop}
         className={this.props.wrapperClass}
+        draggingOverClass={this.props.draggingOverClass}
         style={this.props.wrapperStyle}
         onDrop={(f)=>this.handleDrop(f)} >
         <input
@@ -171,6 +172,7 @@ FileUploader.propTypes = {
   buildUid: PropTypes.bool,
   buildShortUid: PropTypes.bool,
   dragAndDrop: PropTypes.bool,
+  draggingOverClass: PropTypes.string,
   fileBtnClass: PropTypes.string,
   fileBtnStyle: PropTypes.object,
   fileBtnText: PropTypes.string,
@@ -189,6 +191,7 @@ FileUploader.propTypes = {
 FileUploader.defaultProps = {
   allowedTypes: null,
   autoUpload: true,
+  draggingOverClass: '',
   dragAndDrop: true,
   fileBtnClass: '',
   fileBtnStyle: {},
