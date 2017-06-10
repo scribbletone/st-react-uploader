@@ -20,9 +20,14 @@ export default class FileUploader extends React.Component {
   handleDrop(files){
     this.addFiles(files);
   }
-  addFiles(files){
+  addFiles(newFiles){
+    let files = [];
+    for(var i = 0; i < newFiles.length; i++) {
+      files.push(newFiles[i])
+    }
+    files = (this.state.multiple ? this.state.files.concat(files) : [files[0]]);
     this.setState({
-      files: [...files]
+      files: files
     }, ()=>{
       if (this.props.autoUpload) {
         this.startUpload();
@@ -124,7 +129,7 @@ export default class FileUploader extends React.Component {
           ref='fileInput'
           type="file" 
           name={this.props.name}
-          multiple={true}
+          multiple={this.props.multiple}
           style={{display: 'none'}}
           onChange={(e,v)=>{this.handleInputChange(e,v)}}
         />
@@ -170,6 +175,7 @@ FileUploader.propTypes = {
   fileBtnStyle: PropTypes.object,
   fileBtnText: PropTypes.string,
   fileKey: PropTypes.string,
+  multiple: PropTypes.bool,
   onError: PropTypes.func,
   onSuccess: PropTypes.func,
   renderSelectedItems: PropTypes.func,
@@ -188,6 +194,7 @@ FileUploader.defaultProps = {
   fileBtnStyle: {},
   fileBtnText: 'Select File',
   fileKey: '',
+  multiple: false,
   wrapperClass: '',
   wrapperStyle: {},
   buildUid: false,
