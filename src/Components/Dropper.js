@@ -17,9 +17,9 @@ export default class Dropper extends React.Component {
   }
   handleDragOver(e){
     if (this.props.active) {
-      e.stopPropagation();
-      e.preventDefault();
       if (e.dataTransfer.types.indexOf('Files') > -1) {
+        e.stopPropagation();
+        e.preventDefault();
         this.setDraggingOverState(true);
       } else {
         this.setDraggingOverState(false);
@@ -35,10 +35,12 @@ export default class Dropper extends React.Component {
   }
   handleDrop(e){
     if (this.props.active) {
-      e.stopPropagation();
-      e.preventDefault();
-      this.props.onDrop && this.props.onDrop(e.dataTransfer.files)
-      this.setDraggingOverState(false);
+      if (e.dataTransfer.types.indexOf('Files') > -1) {
+        e.stopPropagation();
+        e.preventDefault();
+        this.props.onDrop && this.props.onDrop(e.dataTransfer.files)
+        this.setDraggingOverState(false);
+      }
     }
   }
   render() {

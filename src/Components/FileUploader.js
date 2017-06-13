@@ -25,7 +25,7 @@ export default class FileUploader extends React.Component {
     for(var i = 0; i < newFiles.length; i++) {
       files.push(newFiles[i])
     }
-    files = (this.state.multiple ? this.state.files.concat(files) : [files[0]]);
+    files = (this.props.multiple ? this.state.files.concat(files) : [files[0]]);
     this.setState({
       files: files
     }, ()=>{
