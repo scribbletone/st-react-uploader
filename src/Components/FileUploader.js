@@ -111,7 +111,9 @@ export default class FileUploader extends React.Component {
     } else {
       return this.state.uploadQueue.map((item)=>{
         return (
-          <div key={item.key}>
+          <div 
+            className={this.props.uploadingItemClass} 
+            key={item.key}>
             uploading {item.filename}
           </div>
         );
@@ -188,7 +190,8 @@ FileUploader.propTypes = {
   wrapperStyle: PropTypes.object,
   submitBtnClass: PropTypes.string,
   submitBtnStyle: PropTypes.object,
-  submitBtnText: PropTypes.string
+  submitBtnText: PropTypes.string,
+  uploadingItemClass: PropTypes.string
 };
 FileUploader.defaultProps = {
   allowedTypes: null,
@@ -207,5 +210,6 @@ FileUploader.defaultProps = {
   buildShortUid: false,
   submitBtnClass: '',
   submitBtnStyle: {},
-  submitBtnText: 'Upload'
+  submitBtnText: 'Upload',
+  uploadingItemClass: ''
 }

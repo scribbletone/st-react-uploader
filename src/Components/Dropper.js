@@ -54,7 +54,6 @@ export default class Dropper extends React.Component {
         onDrop={(e)=>{this.handleDrop(e)}}
       >
         {this.props.children}
-        {this.state.draggingOver ? 'over' : ''}
       </div>
     );
   }
