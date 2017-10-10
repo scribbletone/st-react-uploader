@@ -128,34 +128,41 @@ export default class FileUploader extends React.Component {
         draggingOverClass={this.props.draggingOverClass}
         style={this.props.wrapperStyle}
         onDrop={(f)=>this.handleDrop(f)} >
-        <input
-          ref='fileInput'
-          type="file" 
-          name={this.props.name}
-          multiple={this.props.multiple}
-          style={{display: 'none'}}
-          onChange={(e,v)=>{this.handleInputChange(e,v)}}
-        />
-        <a 
-          className={this.props.fileBtnClass}
-          onClick={()=>{this.handleSelectClick()}}
-          style={this.props.fileBtnStyle} >
-          {this.props.fileBtnText}
-        </a>
-        {this.props.autoUpload ? 
-          null
-        :
-          <div>
-            <a 
-              className={this.props.submitBtnClass}
-              onClick={()=>{this.startUpload()}}
-              style={this.props.submitBtnStyle}
-            >
-              {this.props.submitBtnText}
-            </a>
-            {this.renderSelectedItems()}
-          </div>
-        }
+        <div className={this.props.inputWrapperClass}>
+          <input
+            ref='fileInput'
+            type="file" 
+            name={this.props.name}
+            multiple={this.props.multiple}
+            style={{display: 'none'}}
+            onChange={(e,v)=>{this.handleInputChange(e,v)}}
+          />
+          <a 
+            className={this.props.fileBtnClass}
+            onClick={()=>{this.handleSelectClick()}}
+            style={this.props.fileBtnStyle} >
+            {this.props.fileBtnText}
+          </a>
+          {this.props.autoUpload ? 
+            null
+          :
+            <div>
+              <a 
+                className={this.props.submitBtnClass}
+                onClick={()=>{this.startUpload()}}
+                style={this.props.submitBtnStyle}
+              >
+                {this.props.submitBtnText}
+              </a>
+              {this.renderSelectedItems()}
+            </div>
+          }
+          {this.props.hint ? 
+            <div className={this.props.hintClass}>
+              {this.props.hint}
+            </div>
+          : null}
+        </div>
         <div className={this.props.itemsWrapperClass}>
           {this.renderUploadingItems()}
           {this.props.children}
@@ -180,6 +187,8 @@ FileUploader.propTypes = {
   fileBtnStyle: PropTypes.object,
   fileBtnText: PropTypes.string,
   fileKey: PropTypes.string,
+  hint: PropTypes.string,
+  inputWrapperClass: PropTypes.string,
   itemsWrapperClass: PropTypes.string,
   multiple: PropTypes.bool,
   onError: PropTypes.func,
