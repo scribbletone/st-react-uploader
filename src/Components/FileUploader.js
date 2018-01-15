@@ -137,12 +137,19 @@ export default class FileUploader extends React.Component {
             style={{display: 'none'}}
             onChange={(e,v)=>{this.handleInputChange(e,v)}}
           />
-          <a 
-            className={this.props.fileBtnClass}
+          <div 
             onClick={()=>{this.handleSelectClick()}}
-            style={this.props.fileBtnStyle} >
-            {this.props.fileBtnText}
-          </a>
+            >
+            {this.props.renderFileInput ? 
+              this.props.renderFileInput()
+            : 
+              <a 
+                className={this.props.fileBtnClass}
+                style={this.props.fileBtnStyle} >
+                {this.props.fileBtnText}
+              </a>
+            }
+          </div>
           {this.props.autoUpload ? 
             null
           :
@@ -193,6 +200,7 @@ FileUploader.propTypes = {
   multiple: PropTypes.bool,
   onError: PropTypes.func,
   onSuccess: PropTypes.func,
+  renderFileInput: PropTypes.func,
   renderSelectedItems: PropTypes.func,
   renderUploadingItems: PropTypes.func,
   wrapperClass: PropTypes.string,
