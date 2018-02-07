@@ -194,7 +194,10 @@ FileUploader.propTypes = {
   fileBtnStyle: PropTypes.object,
   fileBtnText: PropTypes.string,
   fileKey: PropTypes.string,
-  hint: PropTypes.string,
+  hint: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   inputWrapperClass: PropTypes.string,
   itemsWrapperClass: PropTypes.string,
   multiple: PropTypes.bool,
