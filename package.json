@@ -1,6 +1,6 @@
 {
   "name": "st-react-uploader",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "React drag and drop file uploader",
   "main": "src/index.js",
   "scripts": {

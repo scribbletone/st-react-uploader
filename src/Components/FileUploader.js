@@ -34,6 +34,7 @@ export default class FileUploader extends React.Component {
       }
     });
     this.props.onInputChange && this.props.onInputChange(files);
+    this.props.onUploadStart && this.props.onUploadStart();
   }
   clearInput() {
     this.refs.fileInput.value = "";
@@ -56,6 +57,9 @@ export default class FileUploader extends React.Component {
     this.setState({
       uploadQueue: queue
     });
+    if (queue.length == 0){
+      this.props.onAllComplete && this.props.onAllComplete();
+    }
   }
   startUpload() {
     if (this.isReady()) {
@@ -203,6 +207,8 @@ FileUploader.propTypes = {
   multiple: PropTypes.bool,
   onError: PropTypes.func,
   onSuccess: PropTypes.func,
+  onUploadStart: PropTypes.func,
+  onAllComplete: PropTypes.func,
   renderFileInput: PropTypes.func,
   renderSelectedItems: PropTypes.func,
   renderUploadingItems: PropTypes.func,
