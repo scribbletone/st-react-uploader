@@ -69,8 +69,8 @@ export default class FileUploader extends React.Component {
         awsCredentials: this.props.awsCredentials,
         fileKey: this.props.fileKey,
         buildUid: this.props.buildUid,
-        onError: (k,f)=>{this.handleError(k,f,u,r)},
-        onSuccess: (k,f)=>{this.handleSuccess(k,f,u,r)},
+        onError: (k,f,u,r)=>{this.handleError(k,f,u,r)},
+        onSuccess: (k,f,u,r)=>{this.handleSuccess(k,f,u,r)},
         onUploadStart: (items)=>{this.addToQueue(items)},
         buildShortUid: this.props.buildShortUid,
         url: this.props.bucketUrl
