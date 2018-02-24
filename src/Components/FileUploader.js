@@ -69,8 +69,8 @@ export default class FileUploader extends React.Component {
         awsCredentials: this.props.awsCredentials,
         fileKey: this.props.fileKey,
         buildUid: this.props.buildUid,
-        onError: (k,f)=>{this.handleError(k,f)},
-        onSuccess: (k,f)=>{this.handleSuccess(k,f)},
+        onError: (k,f)=>{this.handleError(k,f,u,r)},
+        onSuccess: (k,f)=>{this.handleSuccess(k,f,u,r)},
         onUploadStart: (items)=>{this.addToQueue(items)},
         buildShortUid: this.props.buildShortUid,
         url: this.props.bucketUrl
@@ -81,18 +81,19 @@ export default class FileUploader extends React.Component {
       alert('no files to upload')      
     }
   }
-  handleSuccess(key,filename){
+  handleSuccess(key,filename,url,request){
     this.props.onSuccess && this.props.onSuccess({
       filename: filename,
       url: `${this.props.bucketUrl}${key}${filename}`,
       key: key,
       fullKey: `${key}${filename}`
-    });
+    }, request);
     this.removeFromQueue(key);
   }
-  handleError(key,filename){
+  handleError(key,filename,url,request){
     this.props.onError && this.props.onError({
-      message: 'Could not complete upload'
+      message: 'Could not complete upload',
+      request: request
     });
     this.removeFromQueue(key);
   }

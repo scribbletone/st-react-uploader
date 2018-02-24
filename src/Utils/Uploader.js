@@ -64,13 +64,13 @@ export default class Uploader {
     let url = `${this.opts.url}${key}${filename}`;
     request.addEventListener("load", (e)=>{
       if (request.status >= 200 && request.status < 300) {
-        this.opts.onSuccess(key, filename, url);  
+        this.opts.onSuccess(key, filename, url, request);  
       } else {
-        this.opts.onError(key, filename, url);
+        this.opts.onError(key, filename, url, request);
       }
     });
     request.addEventListener("error", (e)=>{
-      this.opts.onError(key, filename, url);
+      this.opts.onError(key, filename, url, request);
     });
     return request;
   }
