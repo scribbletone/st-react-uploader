@@ -63,7 +63,11 @@ export default class Uploader {
   addRequestListeners(request, key, filename){
     let url = `${this.opts.url}${key}${filename}`;
     request.addEventListener("load", (e)=>{
-      this.opts.onSuccess(key, filename, url);
+      if (request.status >= 200 && request.status < 300) {
+        this.opts.onSuccess(key, filename, url);  
+      } else {
+        this.opts.onError(key, filename, url);
+      }
     });
     request.addEventListener("error", (e)=>{
       this.opts.onError(key, filename, url);
