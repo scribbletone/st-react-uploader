@@ -20,7 +20,6 @@ export default class Uploader {
   }
   buildForm() {
     let formData = new FormData();
-    formData.append('Content-Type', 'multipart/form-data');
     formData.append('AWSAccessKeyId', this.opts.awsCredentials.access_key_id);
     formData.append('acl', this.opts.awsCredentials.acl);
     formData.append('policy', this.opts.awsCredentials.policy);
@@ -48,6 +47,7 @@ export default class Uploader {
     }
   }
   addFileToForm(formData, key, file, filename) {
+    formData.append('Content-Type', file.type);
     formData.append('key', key + "${filename}");
     formData.append("filename", filename);
     formData.append("file", file, filename);
