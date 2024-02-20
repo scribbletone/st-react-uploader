@@ -10,9 +10,10 @@ export default class FileUploader extends React.Component {
       files: [],
       uploadQueue: []
     }
+    this.fileInputRef = React.createRef();
   }
   handleSelectClick(){
-    this.refs.fileInput.click();
+    this.fileInputRef.current.click();
   }
   handleInputChange(e){
     this.addFiles(e.target.files)
@@ -37,7 +38,7 @@ export default class FileUploader extends React.Component {
     this.props.onUploadStart && this.props.onUploadStart();
   }
   clearInput() {
-    this.refs.fileInput.value = "";
+    this.fileInputRef.current.value = "";
     this.setState({
       files:  []
     });
@@ -135,7 +136,7 @@ export default class FileUploader extends React.Component {
         onDrop={(f)=>this.handleDrop(f)} >
         <div className={this.props.inputWrapperClass}>
           <input
-            ref='fileInput'
+            ref={this.fileInputRef}
             type="file" 
             name={this.props.name}
             multiple={this.props.multiple}
