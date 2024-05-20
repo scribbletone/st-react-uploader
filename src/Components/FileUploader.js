@@ -1,108 +1,123 @@
-import React from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import Uploader from '../Utils/Uploader';
 import Dropper from './Dropper';
 
-export default class FileUploader extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      files: [],
-      uploadQueue: []
+export default function FileUploader(props) {
+  const {
+    allowedTypes = null,
+    autoUpload = true,
+    draggingOverClass = '',
+    dragAndDrop = true,
+    fileBtnClass = '',
+    fileBtnStyle = {},
+    fileBtnText = 'Select File',
+    fileKey = '',
+    itemsWrapperClass = '',
+    multiple = false,
+    wrapperClass = '',
+    wrapperStyle = {},
+    buildUid = false,
+    buildShortUid = false,
+    submitBtnClass = '',
+    submitBtnStyle = {},
+    submitBtnText = 'Upload',
+    uploadingItemClass = ''
+  } = props;
+  
+  const [files, setFiles] = useState([]);
+  const [uploadQueue, setUploadQueue] = useState([]);
+
+  const fileInputRef = useRef(null);
+
+  useEffect(()=>{
+    if (autoUpload && files.length > 0) {
+      startUpload();
     }
-    this.fileInputRef = React.createRef();
+  },[files]);
+
+  function handleSelectClick(){
+    fileInputRef.current.click();
   }
-  handleSelectClick(){
-    this.fileInputRef.current.click();
+  function handleInputChange(e){
+    addFiles(e.target.files)
   }
-  handleInputChange(e){
-    this.addFiles(e.target.files)
+  function handleDrop(newFiles){
+    addFiles(newFiles);
   }
-  handleDrop(files){
-    this.addFiles(files);
-  }
-  addFiles(newFiles){
-    let files = [];
+  function addFiles(newFiles){
+    let filesList = [];
     for(var i = 0; i < newFiles.length; i++) {
-      files.push(newFiles[i])
+      filesList.push(newFiles[i])
     }
-    files = (this.props.multiple ? this.state.files.concat(files) : [files[0]]);
-    this.setState({
-      files: files
-    }, ()=>{
-      if (this.props.autoUpload) {
-        this.startUpload();
-      }
-    });
-    this.props.onInputChange && this.props.onInputChange(files);
-    this.props.onUploadStart && this.props.onUploadStart();
+    filesList = (multiple ? files.concat(filesList) : [filesList[0]]);
+    setFiles(filesList);
+
+    // potential issue 5/20/24. Moved startUpload() to useEffect. This was previously in setState callback.
+    
+    props.onInputChange && props.onInputChange(filesList);
+    props.onUploadStart && props.onUploadStart();
   }
-  clearInput() {
-    this.fileInputRef.current.value = "";
-    this.setState({
-      files:  []
-    });
+  function clearInput() {
+    fileInputRef.current.value = "";
+    setFiles([]);
   }
-  isReady() {
-    return this.state.files.length > 0;
+  function isReady() {
+    return files.length > 0;
   }
-  addToQueue(items){
-    this.setState({
-      uploadQueue: this.state.uploadQueue.concat(items)
-    });
+  function addToQueue(items){
+    setUploadQueue(uploadQueue.concat(items));
   }
-  removeFromQueue(key) {
-    let queue = this.state.uploadQueue.filter((item)=>{
+  function removeFromQueue(key) {
+    let queue = uploadQueue.filter((item)=>{
       return item.key != key;
     });
-    this.setState({
-      uploadQueue: queue
-    });
+    setUploadQueue(queue);
     if (queue.length == 0){
-      this.props.onAllComplete && this.props.onAllComplete();
+      props.onAllComplete && props.onAllComplete();
     }
   }
-  startUpload() {
-    if (this.isReady()) {
+  function startUpload() {
+    if (isReady()) {
       let uploader = new Uploader({
-        files: this.state.files,
-        allowedTypes: this.props.allowedTypes,
-        awsCredentials: this.props.awsCredentials,
-        fileKey: this.props.fileKey,
-        buildUid: this.props.buildUid,
-        onError: (k,f,u,r)=>{this.handleError(k,f,u,r)},
-        onSuccess: (k,f,u,r)=>{this.handleSuccess(k,f,u,r)},
-        onUploadStart: (items)=>{this.addToQueue(items)},
-        buildShortUid: this.props.buildShortUid,
-        url: this.props.bucketUrl
+        files: files,
+        allowedTypes: allowedTypes,
+        awsCredentials: props.awsCredentials,
+        fileKey: fileKey,
+        buildUid: buildUid,
+        onError: (k,f,u,r)=>{handleError(k,f,u,r)},
+        onSuccess: (k,f,u,r)=>{handleSuccess(k,f,u,r)},
+        onUploadStart: (items)=>{addToQueue(items)},
+        buildShortUid: buildShortUid,
+        url: props.bucketUrl
       });
       uploader.start();
-      this.clearInput();
+      clearInput();
     } else {
       alert('no files to upload')      
     }
   }
-  handleSuccess(key,filename,url,request){
-    this.props.onSuccess && this.props.onSuccess({
+  function handleSuccess(key,filename,url,request){
+    props.onSuccess && props.onSuccess({
       filename: filename,
-      url: `${this.props.bucketUrl}${key}${filename}`,
+      url: `${props.bucketUrl}${key}${filename}`,
       key: key,
       fullKey: `${key}${filename}`
     }, request);
-    this.removeFromQueue(key);
+    removeFromQueue(key);
   }
-  handleError(key,filename,url,request){
-    this.props.onError && this.props.onError({
+  function handleError(key,filename,url,request){
+    props.onError && props.onError({
       message: 'Could not complete upload',
       request: request
     });
-    this.removeFromQueue(key);
+    removeFromQueue(key);
   }
-  renderSelectedItems() {
-    if (this.props.renderSelectedItems) {
-      return this.props.renderSelectedItems(this.state.files);
+  function renderSelectedItems() {
+    if (props.renderSelectedItems) {
+      return props.renderSelectedItems(files);
     } else {
-      return this.state.files.map((file)=>{
+      return files.map((file)=>{
         return (
           <div key={"file" + file.name}>
             {file.name}
@@ -111,14 +126,14 @@ export default class FileUploader extends React.Component {
       })
     }
   }
-  renderUploadingItems() {
-    if (this.props.renderUploadingItems) {
-      return this.props.renderUploadingItems(this.state.uploadQueue)
+  function renderUploadingItems() {
+    if (props.renderUploadingItems) {
+      return props.renderUploadingItems(uploadQueue)
     } else {
-      return this.state.uploadQueue.map((item)=>{
+      return uploadQueue.map((item)=>{
         return (
           <div 
-            className={this.props.uploadingItemClass} 
+            className={uploadingItemClass} 
             key={item.key}>
             uploading {item.filename}
           </div>
@@ -126,64 +141,63 @@ export default class FileUploader extends React.Component {
       })
     }
   }
-  render() {
-    return (
-      <Dropper 
-        active={this.props.dragAndDrop}
-        className={this.props.wrapperClass}
-        draggingOverClass={this.props.draggingOverClass}
-        style={this.props.wrapperStyle}
-        onDrop={(f)=>this.handleDrop(f)} >
-        <div className={this.props.inputWrapperClass}>
-          <input
-            ref={this.fileInputRef}
-            type="file" 
-            name={this.props.name}
-            multiple={this.props.multiple}
-            style={{display: 'none'}}
-            onChange={(e,v)=>{this.handleInputChange(e,v)}}
-          />
-          <div 
-            onClick={()=>{this.handleSelectClick()}}
-            >
-            {this.props.renderFileInput ? 
-              this.props.renderFileInput()
-            : 
-              <a 
-                className={this.props.fileBtnClass}
-                style={this.props.fileBtnStyle} >
-                {this.props.fileBtnText}
-              </a>
-            }
-          </div>
-          {this.props.autoUpload ? 
-            null
-          :
-            <div>
-              <a 
-                className={this.props.submitBtnClass}
-                onClick={()=>{this.startUpload()}}
-                style={this.props.submitBtnStyle}
-              >
-                {this.props.submitBtnText}
-              </a>
-              {this.renderSelectedItems()}
-            </div>
+  return (
+    <Dropper 
+      active={dragAndDrop}
+      className={wrapperClass}
+      draggingOverClass={draggingOverClass}
+      style={wrapperStyle}
+      onDrop={(f)=>handleDrop(f)} >
+      <div className={props.inputWrapperClass}>
+        <input
+          ref={fileInputRef}
+          type="file" 
+          name={props.name}
+          multiple={multiple}
+          style={{display: 'none'}}
+          onChange={(e,v)=>{handleInputChange(e,v)}}
+        />
+        <div 
+          onClick={()=>{handleSelectClick()}}
+          >
+          {props.renderFileInput ? 
+            props.renderFileInput()
+          : 
+            <a 
+              className={fileBtnClass}
+              style={fileBtnStyle} >
+              {fileBtnText}
+            </a>
           }
-          {this.props.hint ? 
-            <div className={this.props.hintClass}>
-              {this.props.hint}
-            </div>
-          : null}
         </div>
-        <div className={this.props.itemsWrapperClass}>
-          {this.renderUploadingItems()}
-          {this.props.children}
-        </div>
-      </Dropper>
-    );
-  }
+        {autoUpload ? 
+          null
+        :
+          <div>
+            <a 
+              className={submitBtnClass}
+              onClick={()=>{startUpload()}}
+              style={submitBtnStyle}
+            >
+              {submitBtnText}
+            </a>
+            {renderSelectedItems()}
+          </div>
+        }
+        {props.hint ? 
+          <div className={props.hintClass}>
+            {props.hint}
+          </div>
+        : null}
+      </div>
+      <div className={itemsWrapperClass}>
+        {renderUploadingItems()}
+        {props.children}
+      </div>
+    </Dropper>
+  );
 }
+
 
 FileUploader.propTypes = {
   awsCredentials: PropTypes.object.isRequired,
@@ -221,23 +235,3 @@ FileUploader.propTypes = {
   submitBtnText: PropTypes.string,
   uploadingItemClass: PropTypes.string
 };
-FileUploader.defaultProps = {
-  allowedTypes: null,
-  autoUpload: true,
-  draggingOverClass: '',
-  dragAndDrop: true,
-  fileBtnClass: '',
-  fileBtnStyle: {},
-  fileBtnText: 'Select File',
-  fileKey: '',
-  itemsWrapperClass: '',
-  multiple: false,
-  wrapperClass: '',
-  wrapperStyle: {},
-  buildUid: false,
-  buildShortUid: false,
-  submitBtnClass: '',
-  submitBtnStyle: {},
-  submitBtnText: 'Upload',
-  uploadingItemClass: ''
-}

@@ -1,71 +1,64 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
-export default class Dropper extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      draggingOver: false
+export default function Dropper(props) {
+  const {
+    active:activeProps = true,
+    className:classNameProps = '',
+    style:styleProps = {}
+  } = props;
+  const [draggingOver, setDraggingOver] = useState(false);
+  
+  function setDraggingOverState(draggingOverNew){
+    if (draggingOverNew != draggingOver) {
+      setDraggingOver(draggingOverNew);
     }
   }
-  setDraggingOverState(draggingOver) {
-    if (draggingOver != this.state.draggingOver) {
-      this.setState({
-        draggingOver: draggingOver
-      });
-    }
-  }
-  handleDragOver(e){
-    if (this.props.active) {
+  function handleDragOver(e){
+    if (activeProps) {
       if (e.dataTransfer.types.indexOf('Files') > -1) {
         e.stopPropagation();
         e.preventDefault();
-        this.setDraggingOverState(true);
+        setDraggingOverState(true);
       } else {
-        this.setDraggingOverState(false);
+        setDraggingOverState(false);
       }
     }
   }
-  handleDragLeave(e){
-    if (this.props.active) {
+  function handleDragLeave(e){
+    if (activeProps) {
       e.stopPropagation();
       e.preventDefault();
-      this.setDraggingOverState(false);
+      setDraggingOverState(false);
     }
   }
-  handleDrop(e){
-    if (this.props.active) {
+  function handleDrop(e){
+    if (activeProps) {
       if (e.dataTransfer.types.indexOf('Files') > -1) {
         e.stopPropagation();
         e.preventDefault();
-        this.props.onDrop && this.props.onDrop(e.dataTransfer.files)
-        this.setDraggingOverState(false);
+        props.onDrop && props.onDrop(e.dataTransfer.files)
+        setDraggingOverState(false);
       }
     }
   }
-  render() {
-    let draggingOverClass = (this.state.draggingOver ? this.props.draggingOverClass : '');
-    return (
-      <div 
-        className={`${this.props.className} ${draggingOverClass}`}
-        style={this.props.style}
-        onDragOver={(e)=>{this.handleDragOver(e)}}
-        onDragLeave={(e)=>{this.handleDragLeave(e)}}
-        onDrop={(e)=>{this.handleDrop(e)}}
-      >
-        {this.props.children}
-      </div>
-    );
-  }
+  let draggingOverClass = (draggingOver ? props.draggingOverClass : '');
+  return (
+    <div 
+      className={`${classNameProps} ${draggingOverClass}`}
+      style={styleProps}
+      onDragOver={(e)=>{handleDragOver(e)}}
+      onDragLeave={(e)=>{handleDragLeave(e)}}
+      onDrop={(e)=>{handleDrop(e)}}
+    >
+      {props.children}
+    </div>
+  );
 }
+
 Dropper.propTypes = {
   active: PropTypes.bool,
   className: PropTypes.string,
   onDrop: PropTypes.func,
   style: PropTypes.object
-}
-Dropper.defaultProps = {
-  active: true,
-  className: '',
-  style: {}
 }
