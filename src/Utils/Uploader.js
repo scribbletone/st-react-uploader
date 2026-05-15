@@ -8,7 +8,7 @@ export default class Uploader {
   }
   start() {
     this.opts.files.map((file)=> {
-      if (this.isAllowedType(file)) {
+      if (this.isAllowedFile(file)) {
         let formData = this.buildForm();
         let filename = file.name.replace(/[^a-z0-9_\-\.]/gi, '_');
         let key = this.generateKey();
@@ -26,13 +26,29 @@ export default class Uploader {
     formData.append('signature', this.opts.awsCredentials.signature);
     return formData;
   }
-  isAllowedType(file) {
-    if (!this.opts.allowedTypes || (this.opts.allowedTypes.indexOf(file.type) > -1)){
+  isAllowedFile(file) {                                                                                       
+    if (this.opts.allowedExtensions) {                                                                      
+      return this.isAllowedExtension(file);                                                                   
+    } else if (this.opts.allowedTypes) {
+      return this.isAllowedType(file);                                                                        
+    } else {                                                                                                
       return true;
-    } else {
-      alert('File: ' + file.name + '\nSorry, that file type is not allowed');
-      return false;
     }
+  }
+  isAllowedExtension(file) {
+    const ext = '.' + file.name.split('.').pop().toLowerCase();                                               
+    if (this.opts.allowedExtensions.indexOf(ext) === -1) {                                                  
+      alert('File: ' + file.name + '\nSorry, that file type is not allowed');
+      return false;                                                                                           
+    }
+    return true;                                                                                              
+  }                                                                                                         
+  isAllowedType(file) {
+    if (this.opts.allowedTypes.indexOf(file.type) === -1) {
+      alert('File: ' + file.name + '\nSorry, that file type is not allowed');                                 
+      return false;
+    }                                                                                                         
+    return true;                                                                                            
   }
   generateKey() {
     return `${this.opts.fileKey}${this.buildUid()}`;
@@ -89,6 +105,7 @@ example opts passed in
 {
   files: this.state.files,
   allowedTypes: this.props.allowedTypes,
+  allowedExtensions: this.opts.allowedExtensions,
   awsCredentials: this.props.awsCredentials,
   fileKey: this.props.fileKey,
   buildUid: this.props.buildUid,

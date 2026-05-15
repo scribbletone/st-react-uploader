@@ -5,6 +5,7 @@ import Dropper from './Dropper';
 
 export default function FileUploader(props) {
   const {
+    allowedExtensions = null,
     allowedTypes = null,
     autoUpload = true,
     draggingOverClass = '',
@@ -81,6 +82,7 @@ export default function FileUploader(props) {
     if (isReady()) {
       let uploader = new Uploader({
         files: files,
+        allowedExtensions: allowedExtensions, 
         allowedTypes: allowedTypes,
         awsCredentials: props.awsCredentials,
         fileKey: fileKey,
@@ -203,6 +205,7 @@ FileUploader.propTypes = {
   awsCredentials: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   bucketUrl: PropTypes.string.isRequired,
+  allowedExtensions: PropTypes.array,
   allowedTypes: PropTypes.array,
   autoUpload: PropTypes.bool,
   awsSuccessActionRedirect: PropTypes.string,
