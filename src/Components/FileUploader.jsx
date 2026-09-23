@@ -215,7 +215,10 @@ FileUploader.propTypes = {
   draggingOverClass: PropTypes.string,
   fileBtnClass: PropTypes.string,
   fileBtnStyle: PropTypes.object,
-  fileBtnText: PropTypes.string,
+  fileBtnText: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node
+  ]),
   fileKey: PropTypes.string,
   hint: PropTypes.oneOfType([
     PropTypes.string,
